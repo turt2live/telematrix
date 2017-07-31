@@ -709,7 +709,7 @@ def main():
     app.router.add_route('GET', '/rooms/{room_alias}', matrix_room)
     app.router.add_route('PUT', '/transactions/{transaction}',
                          matrix_transaction)
-    web.run_app(app, port=5000)
+    web.run_app(app, port=9006)
 
 
 if __name__ == "__main__":
