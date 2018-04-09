@@ -344,14 +344,17 @@ async def _matrix_request(method_fun, category, path, user_id, data=None,
     if user_id is not None:
         params['user_id'] = user_id
 
-    async with method_fun('{}_matrix/{}/r0/{}'
-                          .format(MATRIX_HOST, quote(category), quote(path)),
-                          params=params, data=data,
+    url = '{}_matrix/{}/r0/{}'.format(MATRIX_HOST, quote(category), quote(path))
+    print('Performing request: {}'.format(url))
+
+    async with method_fun(url, params=params, data=data,
                           headers={'Content-Type': content_type}) as response:
         if response.headers['Content-Type'].split(';')[0] \
                 == 'application/json':
+            print('Response is JSON')
             return await response.json()
         else:
+            print('Response is non-JSON')
             return await response.read()
 
 
