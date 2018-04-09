@@ -182,7 +182,7 @@ async def matrix_transaction(request):
                 db.session.delete(link)
 
             for alias in aliases:
-                print(alias)
+                print('New alias: {}'.format(alias))
                 if alias.split('_')[0] != '#telegram' \
                         or alias.split(':')[-1] != MATRIX_HOST_BARE:
                     continue
@@ -209,11 +209,12 @@ async def matrix_transaction(request):
                 if matrix_is_telegram(user_id):
                     continue
 
-
+                print('Received m.room.message in {} from {}'.format(event['room_id'], user_id))
                 sender = db.session.query(db.MatrixUser)\
                            .filter_by(matrix_id=user_id).first()
 
                 if not sender:
+                    print('Getting profile for {}'.format(user_id))
                     response = await matrix_get('client', 'profile/{}/displayname'
                                                           .format(user_id), None)
                     try:
@@ -239,6 +240,7 @@ async def matrix_transaction(request):
                     msg, mode = format_matrix_msg('{}', content)
                     response = await group.send_text("* {} {}".format(displayname, msg), parse_mode=mode)
                 elif content['msgtype'] == 'm.image':
+                    print('Event is an image - uploading')
                     try:
                         url = urlparse(content['url'])
 
