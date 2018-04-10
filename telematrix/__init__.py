@@ -266,7 +266,7 @@ async def matrix_transaction(request):
                     print('Unsupported message type {}'.format(content['msgtype']))
                     print(json.dumps(content, indent=4))
 
-            elif event['type'] == 'm.room.member':
+            elif event['type'] == 'm.room.member' and False:
                 if matrix_is_telegram(event['state_key']):
                     continue
 
@@ -361,20 +361,24 @@ async def _matrix_request(method_fun, category, path, user_id, data=None,
 
 
 def matrix_post(category, path, user_id, data, content_type=None):
+    print('Matrix POST: {}'.format(path))
     return _matrix_request(MATRIX_SESS.post, category, path, user_id, data,
                            content_type)
 
 
 def matrix_put(category, path, user_id, data, content_type=None):
+    print('Matrix PUT: {}'.format(path))
     return _matrix_request(MATRIX_SESS.put, category, path, user_id, data,
                            content_type)
 
 
 def matrix_get(category, path, user_id):
+    print('Matrix GET: {}'.format(path))
     return _matrix_request(MATRIX_SESS.get, category, path, user_id)
 
 
 def matrix_delete(category, path, user_id):
+    print('Matrix DELETE: {}'.format(path))
     return _matrix_request(MATRIX_SESS.delete, category, path, user_id)
 
 
@@ -412,6 +416,7 @@ def send_matrix_message(room_id, user_id, txn_id, **kwargs):
 
 
 async def upload_tgfile_to_matrix(file_id, user_id, mime='image/jpeg', convert_to=None):
+    print("Uploading file {} to matrix (from telegram)".format(file_id))
     file_path = (await TG_BOT.get_file(file_id))['file_path']
     request = await TG_BOT.download_file(file_path)
     data = await request.read()
@@ -611,6 +616,8 @@ async def aiotg_message(chat, match):
     await update_matrix_displayname_avatar(chat.sender);
     user_id = USER_ID_FORMAT.format(chat.sender['id'])
     txn_id = quote('{}:{}'.format(chat.message['message_id'], chat.id))
+
+    print("Telegram message from {} ({})".format(chat.sender['username'], chat.sender['id']))
 
     message = match.group(0)
 
