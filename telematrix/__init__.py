@@ -606,6 +606,8 @@ async def aiotg_alias(chat, match):
 
 @TG_BOT.command(r'(?s)(.*)')
 async def aiotg_message(chat, match):
+    print("Telegram message from {} ({})".format(chat.sender['username'], chat.sender['id']))
+
     link = db.session.query(db.ChatLink).filter_by(tg_room=chat.id).first()
     if link:
         room_id = link.matrix_room
@@ -616,8 +618,6 @@ async def aiotg_message(chat, match):
     await update_matrix_displayname_avatar(chat.sender);
     user_id = USER_ID_FORMAT.format(chat.sender['id'])
     txn_id = quote('{}:{}'.format(chat.message['message_id'], chat.id))
-
-    print("Telegram message from {} ({})".format(chat.sender['username'], chat.sender['id']))
 
     message = match.group(0)
 
