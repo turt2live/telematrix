@@ -606,7 +606,10 @@ async def aiotg_alias(chat, match):
 
 @TG_BOT.command(r'(?s)(.*)')
 async def aiotg_message(chat, match):
-    print("Telegram message from {} ({})".format(chat.sender['username'], chat.sender['id']))
+    if 'username' in chat.sender:
+        print("Telegram message from {} ({})".format(chat.sender['username'], chat.sender['id']))
+    else:
+        print("Telegram message from NO_USERNAME ({})".format(chat.sender['id']))
 
     link = db.session.query(db.ChatLink).filter_by(tg_room=chat.id).first()
     if link:
